@@ -1,5 +1,50 @@
-<div class="homepage">
-  <img src="{{ 'weeklyhow-logo.png' | asset_img_url: 'large' }}" class="logo">
-  <h1>Welcome to Shopify Theme Development course!</h1>
-  <p>{% render 'homepage-text' %}</p>
-</div>
+<main class="homepage">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">
+            Welcome to <span class="hero-brand">SHAMSY</span>
+          </h1>
+          <p class="hero-subtitle">
+            Discover our curated collection of premium products designed to enhance your lifestyle
+          </p>
+          <div class="hero-actions">
+            <a href="/collections" class="btn btn-primary">Shop Now</a>
+            <a href="/pages/about" class="btn btn-secondary">Learn More</a>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-image-container">
+            <img 
+              src="{{ 'PRIMARY-LOGO-(SHAMSY).png' | asset_img_url: 'large' }}" 
+              alt="{{ shop.name }}" 
+              width="300"
+              height="300"
+              class="hero-image">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Hero Features -->
+      <div class="hero-features">
+        <div class="feature">
+          <div class="feature-icon">🚚</div>
+          <h3>Free Shipping</h3>
+          <p>On orders over $50</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">✨</div>
+          <h3>Premium Quality</h3>
+          <p>Handpicked products</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🔄</div>
+          <h3>Easy Returns</h3>
+          <p>30-day guarantee</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
