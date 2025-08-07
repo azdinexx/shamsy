@@ -1,9 +1,9 @@
 {% comment %}
-  Loading Screen - Hardcoded animation from center to top with fade
+  Loading Screen - Optimized animation from center to top with fade
 {% endcomment %}
 
 {% if section.settings.enable_loading_screen %}
-  <div id="loading-screen-{{ section.id }}" class="loading-screen">
+  <div id="loading-screen-{{ section.id }}" class="loading-screen" aria-hidden="true">
     <div class="loading-content">
       {% if section.settings.loading_logo != blank %}
         <div class="loading-logo">
@@ -14,7 +14,7 @@
             width="200"
             height="200"
             loading="eager"
-            decoding="sync">
+            decoding="async">
         </div>
       {% endif %}
     </div>
@@ -33,7 +33,7 @@
       align-items: center;
       z-index: 9999;
       opacity: 1;
-      transition: opacity 0.5s ease;
+      transition: opacity .2s ease-in-out;
       pointer-events: none;
       overflow: hidden;
     }
@@ -55,7 +55,7 @@
     }
 
     .loading-logo.animate-to-header {
-      animation: logoToTop 1.5s ease-in-out forwards;
+      animation: logoToTop 1.2s ease-in-out forwards;
     }
 
     @keyframes logoToTop {
@@ -68,47 +68,93 @@
         top: 50px;
         transform: translate(-50%, -50%) scale(0.3);
         opacity: 0;
+        filter: blur(8px);
       }
     }
 
     .loading-logo-image {
       width: 200px;
       height: auto;
+      max-width: 100%;
+    }
+
+    .loading-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
     }
 
     @media (prefers-reduced-motion: reduce) {
       .loading-screen,
       .loading-logo,
       .loading-logo-image {
-        transition: none;
-        animation: none;
+        transition: none !important;
+        animation: none !important;
+      }
+      .loading-screen {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .loading-logo-image {
+        width: 150px;
+      }
+      @keyframes logoToTop {
+        0% {
+          top: 50%;
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+        100% {
+          top: 30px;
+          transform: translate(-50%, -50%) scale(0.25);
+          opacity: 0;
+          filter: blur(8px);
+        }
       }
     }
   </style>
 
   <script>
-    window.addEventListener('load', () => {
+    document.addEventListener('DOMContentLoaded', () => {
       const loadingScreen = document.getElementById('loading-screen-{{ section.id }}');
       const loadingLogo = document.querySelector('.loading-logo');
       const headerLogo = document.querySelector('.header-logo .logo-image');
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (!loadingScreen || !loadingLogo) return;
 
       document.body.style.overflow = 'hidden';
 
-      if (loadingScreen && loadingLogo) {
-        if (headerLogo) headerLogo.style.opacity = '0';
+      const hideLoadingScreen = () => {
+        loadingScreen.classList.add('hidden');
+        if (headerLogo) headerLogo.style.opacity = '1';
+        document.body.style.overflow = '';
+        setTimeout(() => {
+          loadingScreen.style.display = 'none';
+        }, 400); // Matches transition duration
+      };
 
+      if (reducedMotion) {
+        hideLoadingScreen();
+        return;
+      }
+
+      if (headerLogo) headerLogo.style.opacity = '0';
+
+      // Start animation after a short delay
+      requestAnimationFrame(() => {
         setTimeout(() => {
           loadingLogo.classList.add('animate-to-header');
-        }, 1000);
+        }, 500);
+      });
 
-        loadingLogo.addEventListener('animationend', () => {
-          loadingScreen.style.opacity = '0';
-          if (headerLogo) headerLogo.style.opacity = '1';
-          setTimeout(() => {
-            loadingScreen.style.display = 'none';
-          }, 500); // fade-out transition duration
-        });
-      }
+      // Handle animation end
+      loadingLogo.addEventListener('animationend', hideLoadingScreen, { once: true });
+
+      // Fallback: hide loading screen after 3s if animation doesn't complete
+      setTimeout(hideLoadingScreen, 3000);
     });
   </script>
 {% endif %}
