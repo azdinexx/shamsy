@@ -83,9 +83,8 @@
     <main role="main">
       {{ content_for_layout }}
     </main>
-    {% if template == 'index' %}
-      {% section 'hero-section' %}
-    {% endif %}
+    {% section 'announcement' %}
+    {% section 'hero-section' %}
     {% render 'footer' %}
 
     <script>

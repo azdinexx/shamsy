@@ -1,0 +1,137 @@
+{% comment %}
+  Featured Products Section
+  A responsive product grid with enhanced Tailwind CSS styles
+{% endcomment %}
+
+{% schema %}
+    {
+      "name": "Featured Products",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Section Title",
+          "default": "Featured Products"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "range",
+          "id": "products_count",
+          "min": 2,
+          "max": 12,
+          "step": 1,
+          "label": "Number of products to show",
+          "default": 4
+        },
+        {
+          "type": "select",
+          "id": "color_scheme",
+          "label": "Color scheme",
+          "options": [
+            {
+              "value": "white",
+              "label": "White"
+            },
+            {
+              "value": "gray",
+              "label": "Gray"
+            }
+          ],
+          "default": "white"
+        }
+      ],
+      "presets": [
+        {
+          "name": "Featured Products",
+          "category": "Collection"
+        }
+      ]
+    }
+    {% endschema %}
+    
+    <style scoped>
+    .featured-products {
+      @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 lg:py-20;
+    }
+    
+    .featured-products__title {
+      @apply text-3xl md:text-4xl font-light text-gray-900 mb-8 md:mb-12 text-center;
+    }
+    
+    .featured-products__grid {
+      @apply grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6;
+    }
+    
+    .product-card {
+      @apply bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 ease-in-out;
+      @apply flex flex-col h-full border border-gray-100 hover:border-gray-200;
+    }
+    
+    .product-card__image-container {
+      @apply relative aspect-square overflow-hidden;
+    }
+    
+    .product-card__image {
+      @apply w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105;
+    }
+    
+    .product-card__content {
+      @apply p-4 flex flex-col flex-grow;
+    }
+    
+    .product-card__title {
+      @apply text-base sm:text-lg font-medium text-gray-900 mb-2 line-clamp-2;
+    }
+    
+    .product-card__price {
+      @apply text-sm sm:text-base text-gray-600 mt-auto;
+    }
+    
+    .no-collection-message {
+      @apply text-center text-gray-500 py-12;
+    }
+    
+    /* Color scheme variations */
+    .featured-products--gray {
+      @apply bg-gray-50;
+    }
+    </style>
+    
+    <section class="featured-products featured-products--{{ section.settings.color_scheme }}">
+      {%- if section.settings.title != blank -%}
+        <h2 class="featured-products__title">{{ section.settings.title }}</h2>
+      {%- endif -%}
+    
+      {%- if section.settings.collection -%}
+        <div class="featured-products__grid">
+          {%- for product in section.settings.collection.products limit: section.settings.products_count -%}
+            <a href="{{ product.url }}" class="product-card" aria-label="{{ product.title | escape }}">
+              <div class="product-card__image-container">
+                {%- if product.featured_image -%}
+                  <img
+                    class="product-card__image"
+                    src="{{ product.featured_image | img_url: '600x600' }}"
+                    alt="{{ product.featured_image.alt | escape | default: product.title | escape }}"
+                    loading="lazy"
+                    width="600"
+                    height="600"
+                  >
+                {%- else -%}
+                  <div class="product-card__image bg-gray-100"></div>
+                {%- endif -%}
+              </div>
+              <div class="product-card__content">
+                <h3 class="product-card__title">{{ product.title | escape }}</h3>
+                <p class="product-card__price">{{ product.price | money }}</p>
+              </div>
+            </a>
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <p class="no-collection-message">Please select a collection in the section settings.</p>
+      {%- endif -%}
+    </section>

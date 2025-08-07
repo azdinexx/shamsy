@@ -1,0 +1,260 @@
+<!-- sections/custom-header.liquid -->
+<header class="site-header site-header--desktop">
+  <style>
+    .site-header {
+      color: {{ section.settings.text_color }};
+      font-family: {{ section.settings.font_family }};
+      background-color: {{ section.settings.background_color }};
+      border-bottom: 2px solid {{ section.settings.border_color }};
+      box-shadow: 0 4px 12px {{ section.settings.shadow_color }};
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      transition: padding 0.3s ease, box-shadow 0.3s ease;
+      will-change: padding, box-shadow;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+
+    .site-header.scrolled {
+      padding: 10px 0;
+      box-shadow: 0 2px 8px {{ section.settings.shadow_color }};
+    }
+
+    .site-header a {
+      color: {{ section.settings.text_color }};
+      text-decoration: none;
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-logo {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .logo-link {
+      display: block;
+      text-decoration: none;
+    }
+
+    .logo-image {
+      max-width: 150px;
+      height: auto;
+      transition: transform 0.3s ease, opacity 0.5s ease, max-width 0.3s ease;
+      opacity: 1;
+      will-change: max-width, transform;
+    }
+
+    .logo-image:hover {
+      transform: scale(1.05);
+    }
+
+    .site-header.scrolled .logo-image {
+      max-width: 75px;
+    }
+
+    .header-nav {
+      flex: 1;
+    }
+
+    .header-nav-left {
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .header-nav-right {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .nav-menu {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .nav-menu li {
+      margin: 0;
+    }
+
+    .nav-menu a {
+      text-decoration: none;
+      color: {{ section.settings.text_color }};
+      font-weight: 500;
+      font-size: 16px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .nav-menu a:hover {
+      color: {{ section.settings.primary_color }};
+      background-color: {{ section.settings.hover_bg_color }};
+    }
+
+    .nav-menu a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      width: 0;
+      height: 3px;
+      background: linear-gradient(90deg, {{ section.settings.primary_color }}, {{ section.settings.secondary_color }});
+      transition: all 0.2s ease;
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+
+    .nav-menu a:hover::after {
+      width: 100%;
+    }
+  </style>
+
+  <div class="header-container">
+    <!-- Left Navigation -->
+    <nav class="header-nav header-nav-left">
+      <ul class="nav-menu">
+        {% for link in linklists[section.settings.left_menu].links %}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <!-- Center Logo -->
+    <div class="header-logo">
+      <a href="/" class="logo-link">
+        {% if section.settings.logo != blank %}
+          <img 
+            src="{{ section.settings.logo | image_url: width: 400 }}"
+            alt="{{ section.settings.logo_alt | escape | default: shop.name }}"
+            width="200"
+            height="200"
+            class="logo-image">
+        {% else %}
+          <span class="text-logo">{{ shop.name }}</span>
+        {% endif %}
+      </a>
+    </div>
+
+    <!-- Right Navigation -->
+    <nav class="header-nav header-nav-right">
+      <ul class="nav-menu">
+        {% for link in linklists[section.settings.right_menu].links %}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Desktop Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Header Logo"
+    },
+    {
+      "type": "text",
+      "id": "logo_alt",
+      "label": "Logo Alt Text",
+      "default": "Shop logo"
+    },
+    {
+      "type": "link_list",
+      "id": "left_menu",
+      "label": "Left Navigation Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "link_list",
+      "id": "right_menu",
+      "label": "Right Navigation Menu",
+      "default": "footer"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Bottom Color",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "color",
+      "id": "shadow_color",
+      "label": "Shadow Color",
+      "default": "rgba(0,0,0,0.05)"
+    },
+    {
+      "type": "color",
+      "id": "primary_color",
+      "label": "Primary Accent Color",
+      "default": "#ff5a5f"
+    },
+    {
+      "type": "color",
+      "id": "secondary_color",
+      "label": "Secondary Accent Color",
+      "default": "#ffc371"
+    },
+    {
+      "type": "color",
+      "id": "hover_bg_color",
+      "label": "Nav Hover Background",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "select",
+      "id": "font_family",
+      "label": "Font Family",
+      "default": "Helvetica, Arial, sans-serif",
+      "options": [
+        { "value": "Helvetica, Arial, sans-serif", "label": "Helvetica / Arial" },
+        { "value": "'Times New Roman', serif", "label": "Times New Roman" },
+        { "value": "'Courier New', monospace", "label": "Courier New" },
+        { "value": "'Georgia', serif", "label": "Georgia" },
+        { "value": "'Roboto', sans-serif", "label": "Roboto" },
+        { "value": "'Open Sans', sans-serif", "label": "Open Sans" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Desktop Header"
+    }
+  ]
+}
+{% endschema %}
