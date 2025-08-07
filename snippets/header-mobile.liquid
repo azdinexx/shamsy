@@ -1,0 +1,44 @@
+<header class="site-header site-header--mobile">
+  <div class="header-container">
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-toggle" aria-label="Toggle menu" data-mobile-menu-toggle>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+
+    <!-- Center Logo -->
+    <div class="header-logo">
+      <a href="/" class="logo-link">
+        <img 
+          src="{{ 'PRIMARY-LOGO-Noir-(SHAMSY).png' | asset_img_url: 'medium' }}" 
+          alt="{{ shop.name }}" 
+          width="150" 
+          height="150"
+          class="logo-image">
+      </a>
+    </div>
+
+    <!-- Mobile Cart Icon -->
+    <div class="mobile-cart">
+      <a href="/cart" class="cart-link" aria-label="Cart">
+        <span class="cart-icon">🛒</span>
+        <span class="cart-count">{{ cart.item_count }}</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation Menu (Hidden by default) -->
+  <nav class="mobile-nav" data-mobile-nav>
+    <ul class="mobile-nav-menu">
+      <li><a href="/collections">Collections</a></li>
+      <li><a href="/pages/about">About</a></li>
+      <li><a href="/pages/contact">Contact</a></li>
+      <li><a href="/search">Search</a></li>
+      <li><a href="/account">Account</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- Mobile Menu Blur Overlay -->
+<div class="mobile-menu-blur-overlay" data-mobile-blur-overlay></div> 

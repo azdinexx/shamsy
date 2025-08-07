@@ -9,112 +9,133 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
     {{ content_for_header }}
     <!-- Header hook for plugins -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="{{ 'tan-pearl.otf' | asset_url }}" as="font" type="font/otf" crossorigin>
     <link href="{{ 'application.css' | asset_url }}" rel="stylesheet">
-    <link href="{{ 'homepage.css' | asset_url }}" rel="stylesheet">
-    <script src="{{ 'application.js' | asset_url }}" async></script>
+    <script src="{{ 'application.js' | asset_url }}" defer></script>
+
+    <!-- Font Face Declaration -->
+    <style>
+      @font-face {
+        font-family: 'Tan Pearl';
+        src: url('{{ "tan-pearl.otf" | asset_url }}') format('opentype');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      /* Ensure fonts are applied when loaded */
+      .fonts-loaded .hero_section__title,
+      .fonts-loaded .header-logo,
+      .fonts-loaded .footer-brand-title {
+        font-family: '{{ settings.theme_font }}', serif !important;
+      }
+
+      /* Loading screen styles */
+      .loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #f3e9dc;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+      }
+
+      .loading-logo {
+        text-align: center;
+        transform: scale(1);
+        transition: transform 1s ease;
+      }
+
+      .loading-logo.animate-to-header {
+        transform: translateY(-100px) scale(0.5);
+      }
+
+      .loading-logo-image {
+        max-width: 200px;
+        height: auto;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .loading-logo-image {
+          max-width: 150px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .loading-logo-image {
+          max-width: 100px;
+        }
+      }
+    </style>
   </head>
-  <body>
+  <body class="fonts-loading">
     <!-- Loading Screen -->
-    <div id="loading-screen" class="loading-screen">
-      <div class="loading-logo">
-        <img 
-          src="{{ 'PRIMARY-LOGO-(SHAMSY).png' | asset_img_url: 'large' }}" 
-          alt="{{ shop.name }}" 
-          width="200" 
-          height="200"
-          class="loading-logo-image">
-      </div>
-    </div>
+    {% section 'loading-screen' %}
+
 
     {% render 'header' %}
     <main role="main">
       {{ content_for_layout }}
     </main>
+    {% if template == 'index' %}
+      {% section 'hero-section' %}
+    {% endif %}
+    {% render 'footer' %}
 
     <script>
-      // Loading screen animation
-      window.addEventListener('load', function() {
-        console.log('Loading animation started');
-        const loadingScreen = document.getElementById('loading-screen');
-        const loadingLogo = document.querySelector('.loading-logo');
-        const headerLogo = document.querySelector('.header-logo .logo-image');
-        
-        //console.log('Elements found:', { loadingScreen, loadingLogo, headerLogo });
-        
-        // Hide header logo initially
-        if (headerLogo) {
-          headerLogo.style.opacity = '0';
-        }
-        
-        // Test animation immediately to see if it works
-        setTimeout(function() {
-          console.log('Testing animation...');
-          
-          // Force a reflow to ensure CSS is applied
-          loadingLogo.offsetHeight;
-          
-          // Add animation class
-          loadingLogo.classList.add('animate-to-header');
-          console.log('Animation class added');
-          
-          // Check if class was added
-          setTimeout(function() {
-            console.log('Logo classes:', loadingLogo.className);
-            console.log('Logo transform:', loadingLogo.style.transform);
-            console.log('Logo computed transform:', window.getComputedStyle(loadingLogo).transform);
-          }, 100);
-          
-          // Fade out loading screen background
-          setTimeout(function() {
-            loadingScreen.style.backgroundColor = 'rgba(243, 233, 220, 0)';
-          }, 1000);
-          
-          // Show header logo with delay
-          setTimeout(function() {
-            if (headerLogo) {
-              headerLogo.style.opacity = '1';
-            }
-          }, 1500);
-          
-          // Remove loading screen after animation
-          setTimeout(function() {
-            loadingScreen.style.opacity = '0';
-            setTimeout(function() {
-              loadingScreen.style.display = 'none';
-            }, 500);
-          }, 3000);
+      // Simplified font loading
+      if ('fonts' in document) {
+        document.fonts.load('1em Tan Pearl').then(() => {
+          document.documentElement.classList.add('fonts-loaded');
+          document.documentElement.classList.remove('fonts-loading');
+        }).catch(() => {
+          // Fallback if font fails to load
+          document.documentElement.classList.add('fonts-loaded');
+          document.documentElement.classList.remove('fonts-loading');
+        });
+      } else {
+        // Fallback for browsers without Font Loading API
+        setTimeout(() => {
+          document.documentElement.classList.add('fonts-loaded');
+          document.documentElement.classList.remove('fonts-loading');
         }, 1000);
-      });
+      }
 
-      // Header scroll effect - optimized for performance
+      
+
+      // Header scroll effect
       let ticking = false;
       let lastScrollTop = 0;
-      
+
       function updateHeader() {
         const header = document.querySelector('.site-header');
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
+
         if (scrollTop > 50 && lastScrollTop <= 50) {
           header.classList.add('scrolled');
         } else if (scrollTop <= 50 && lastScrollTop > 50) {
           header.classList.remove('scrolled');
         }
-        
+
         lastScrollTop = scrollTop;
         ticking = false;
       }
-      
+
       function requestTick() {
         if (!ticking) {
           requestAnimationFrame(updateHeader);
           ticking = true;
         }
       }
-      
+
       window.addEventListener('scroll', requestTick, { passive: true });
     </script>
+
   </body>
 </html>

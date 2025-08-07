@@ -1,33 +1,116 @@
-<header class="site-header">
-  <div class="header-container">
-    <!-- Left Navigation -->
-    <nav class="header-nav header-nav-left">
-      <ul class="nav-menu">
-        <li><a href="/collections">Collections</a></li>
-        <li><a href="/pages/about">About</a></li>
-        <li><a href="/pages/contact">Contact</a></li>
-      </ul>
-    </nav>
+<!-- Desktop Header -->
+{% render 'header-desktop' %}
 
-    <!-- Center Logo -->
-    <div class="header-logo">
-      <a href="/" class="logo-link">
-        <img 
-          src="{{ 'PRIMARY-LOGO-Noir-(SHAMSY).png' | asset_img_url: 'large' }}" 
-          alt="{{ shop.name }}" 
-          width="200" 
-          height="200"
-          class="logo-image">
-      </a>
-    </div>
+<!-- Mobile Header -->
+{% render 'header-mobile' %}
 
-    <!-- Right Navigation -->
-    <nav class="header-nav header-nav-right">
-      <ul class="nav-menu">
-        <li><a href="/search">Search</a></li>
-        <li><a href="/account">Account</a></li>
-        <li><a href="/cart">Cart ({{ cart.item_count }})</a></li>
-      </ul>
-    </nav>
-  </div>
-</header>
+<style>
+  /* Desktop styles */
+  .site-header--desktop {
+    display: block;
+  }
+  
+  .site-header--mobile {
+    display: none;
+  }
+  
+  /* Mobile and tablet styles */
+  @media (max-width: 768px) {
+    .site-header--desktop {
+      display: none;
+    }
+    
+    .site-header--mobile {
+      display: block;
+    }
+  }
+</style>
+
+<script>
+  // Mobile menu toggle functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.querySelector('[data-mobile-menu-toggle]');
+    const mobileNav = document.querySelector('[data-mobile-nav]');
+    const blurOverlay = document.querySelector('[data-mobile-blur-overlay]');
+    const body = document.body;
+    
+    if (menuToggle && mobileNav && blurOverlay) {
+      // Toggle menu
+      menuToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const isActive = mobileNav.classList.contains('active');
+        
+        if (isActive) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+      
+      // Close menu when clicking on menu items
+      const menuItems = mobileNav.querySelectorAll('a');
+      menuItems.forEach(item => {
+        item.addEventListener('click', function() {
+          closeMenu();
+        });
+      });
+      
+      // Close menu when clicking on blur overlay
+      blurOverlay.addEventListener('click', function() {
+        closeMenu();
+      });
+      
+      // Close menu when clicking outside
+      document.addEventListener('click', function(e) {
+        if (mobileNav.classList.contains('active') && 
+            !mobileNav.contains(e.target) && 
+            !menuToggle.contains(e.target)) {
+          closeMenu();
+        }
+      });
+      
+      // Close menu on escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileNav.classList.contains('active')) {
+          closeMenu();
+        }
+      });
+      
+      // Prevent body scroll when menu is open
+      function preventBodyScroll() {
+        body.style.overflow = 'hidden';
+        body.style.position = 'fixed';
+        body.style.width = '100%';
+      }
+      
+      function allowBodyScroll() {
+        body.style.overflow = '';
+        body.style.position = '';
+        body.style.width = '';
+      }
+      
+      function openMenu() {
+        mobileNav.classList.add('active');
+        blurOverlay.classList.add('active');
+        menuToggle.classList.add('active');
+        preventBodyScroll();
+      }
+      
+      function closeMenu() {
+        mobileNav.classList.remove('active');
+        blurOverlay.classList.remove('active');
+        menuToggle.classList.remove('active');
+        allowBodyScroll();
+      }
+      
+      // Handle window resize
+      window.addEventListener('resize', function() {
+        if (window.innerWidth > 768 && mobileNav.classList.contains('active')) {
+          closeMenu();
+        }
+      });
+    }
+  });
+</script>

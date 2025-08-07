@@ -1,0 +1,340 @@
+{% comment %}
+  Hero Section - Fixed Version
+  - Removed unused variable assignment
+  - Added proper responsive image handling
+  - Improved accessibility
+  - Better error handling for empty states
+  - Enhanced CSS with better mobile responsiveness
+{% endcomment %}
+
+<section class="hero-section" id="hero-{{ section.id }}">
+  <div class="hero-section__container">
+    <div class="hero-section__content">
+      <div class="hero-section__text">
+        {% if section.settings.hero_title != blank %}
+          <h1 class="hero-section__title">{{ section.settings.hero_title | escape }}</h1>
+        {% endif %}
+        
+        {% if section.settings.hero_description != blank %}
+          <p class="hero-section__description">{{ section.settings.hero_description | escape }}</p>
+        {% endif %}
+        
+        {% if section.settings.primary_button_text != blank or section.settings.secondary_button_text != blank %}
+          <div class="hero-section__actions">
+            {% if section.settings.primary_button_text != blank and section.settings.primary_button_url != blank %}
+              <a href="{{ section.settings.primary_button_url }}" 
+                 class="hero-section__btn hero-section__btn--primary"
+                 {% if section.settings.primary_button_url contains 'http' %}target="_blank" rel="noopener"{% endif %}>
+                {{ section.settings.primary_button_text | escape }}
+              </a>
+            {% endif %}
+            
+            {% if section.settings.secondary_button_text != blank and section.settings.secondary_button_url != blank %}
+              <a href="{{ section.settings.secondary_button_url }}" 
+                 class="hero-section__btn hero-section__btn--secondary"
+                 {% if section.settings.secondary_button_url contains 'http' %}target="_blank" rel="noopener"{% endif %}>
+                {{ section.settings.secondary_button_text | escape }}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+      
+      {% if section.settings.hero_image != blank %}
+        <div class="hero-section__image-container">
+          {% assign hero_image_alt = section.settings.hero_image_alt | default: section.settings.hero_image.alt | default: 'Hero image' %}
+          <img 
+            src="{{ section.settings.hero_image | image_url: width: 800 }}" 
+            srcset="{{ section.settings.hero_image | image_url: width: 400 }} 400w,
+                    {{ section.settings.hero_image | image_url: width: 600 }} 600w,
+                    {{ section.settings.hero_image | image_url: width: 800 }} 800w,
+                    {{ section.settings.hero_image | image_url: width: 1200 }} 1200w"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            alt="{{ hero_image_alt | escape }}"
+            class="hero-section__image"
+            width="{{ section.settings.hero_image.width | default: 600 }}"
+            height="{{ section.settings.hero_image.height | default: 600 }}"
+            loading="lazy"
+            decoding="async">
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    padding: clamp(2rem, 5vw, 4rem) 0;
+    background-color: {{ section.settings.background_color | default: '#f9f9f9' }};
+    position: relative;
+  }
+
+  .hero-section__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 clamp(1rem, 3vw, 2rem);
+  }
+
+  .hero-section__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+    min-height: 400px;
+  }
+
+  .hero-section__text {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .hero-section__title {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: {{ section.settings.title_color | default: '#333' }};
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-section__description {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    color: {{ section.settings.description_color | default: '#666' }};
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .hero-section__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .hero-section__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 1.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    min-width: 140px;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .hero-section__btn--primary {
+    background-color: {{ section.settings.primary_button_bg | default: '#2c3e50' }};
+    color: {{ section.settings.primary_button_text_color | default: '#fff' }};
+    border-color: {{ section.settings.primary_button_bg | default: '#2c3e50' }};
+  }
+
+  .hero-section__btn--primary:hover {
+    background-color: {{ section.settings.primary_button_hover_bg | default: '#34495e' }};
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+  }
+
+  .hero-section__btn--secondary {
+    background-color: transparent;
+    color: {{ section.settings.secondary_button_text_color | default: '#2c3e50' }};
+    border-color: {{ section.settings.secondary_button_border | default: '#2c3e50' }};
+  }
+
+  .hero-section__btn--secondary:hover {
+    background-color: {{ section.settings.secondary_button_hover_bg | default: '#2c3e50' }};
+    color: {{ section.settings.secondary_button_hover_text | default: '#fff' }};
+    transform: translateY(-1px);
+  }
+
+  .hero-section__image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .hero-section__image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .hero-section__image:hover {
+    transform: scale(1.02);
+  }
+
+  /* Mobile Styles */
+  @media (max-width: 768px) {
+    .hero-section__content {
+      grid-template-columns: 1fr;
+      text-align: center;
+      gap: 2rem;
+    }
+
+    .hero-section__actions {
+      justify-content: center;
+    }
+
+    .hero-section__btn {
+      width: 100%;
+      max-width: 280px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-section {
+      padding: 1.5rem 0;
+    }
+
+    .hero-section__btn {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.9rem;
+      min-width: auto;
+    }
+
+    .hero-section__actions {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .hero-section__btn {
+      border-width: 3px;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-section__btn,
+    .hero-section__image {
+      transition: none;
+    }
+    
+    .hero-section__btn:hover,
+    .hero-section__image:hover {
+      transform: none;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Hero Section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content Settings"
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Hero Title",
+      "default": "SHAMSY COSMÉTIQUE NATURELLE POUR VOTRE PEAU"
+    },
+    {
+      "type": "textarea",
+      "id": "hero_description",
+      "label": "Hero Description",
+      "default": "Nourrissez votre peau avec le soleil du Maroc"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero Image"
+    },
+    {
+      "type": "text",
+      "id": "hero_image_alt",
+      "label": "Hero Image Alt Text",
+      "default": "SHAMSY - Cosmétique Naturelle",
+      "info": "Leave blank to use the image's alt text"
+    },
+    {
+      "type": "header",
+      "content": "Button Settings"
+    },
+    {
+      "type": "text",
+      "id": "primary_button_text",
+      "label": "Primary Button Text",
+      "default": "Voir les produits"
+    },
+    {
+      "type": "url",
+      "id": "primary_button_url",
+      "label": "Primary Button URL"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button_text",
+      "label": "Secondary Button Text",
+      "default": "Commander maintenant"
+    },
+    {
+      "type": "url",
+      "id": "secondary_button_url",
+      "label": "Secondary Button URL"
+    },
+    {
+      "type": "header",
+      "content": "Color Settings"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description Color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "primary_button_bg",
+      "label": "Primary Button Background",
+      "default": "#2c3e50"
+    },
+    {
+      "type": "color",
+      "id": "primary_button_text_color",
+      "label": "Primary Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_border",
+      "label": "Secondary Button Border Color",
+      "default": "#2c3e50"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_text_color",
+      "label": "Secondary Button Text Color",
+      "default": "#2c3e50"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Section"
+    }
+  ]
+}
+{% endschema %}
