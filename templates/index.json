@@ -1,0 +1,30 @@
+{
+    "sections": {
+        "hero-section": {
+            "type": "hero-section",
+            "settings": {
+                "heading": "Welcome to Our Store",
+                "subheading": "Discover amazing products at unbeatable prices",
+                "button_text": "Shop Now",
+                "button_url": "/collections/all",
+                "background_image": "",
+                "background_color": "#f8f9fa",
+                "text_color": "#333333",
+                "text_alignment": "center",
+                "height": "medium",
+                "overlay_opacity": 30
+            }
+        },
+        "featured-products-section": {
+            "type": "featured-products-section",
+            "settings": {
+                "heading": "Featured Products",
+                "products": []
+            }
+        }
+    },
+    "order": [
+        "hero-section",
+        "featured-products-section"
+    ]
+}
