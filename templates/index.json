@@ -1,30 +1,76 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
-    "sections": {
-        "hero-section": {
-            "type": "hero-section",
-            "settings": {
-                "heading": "Welcome to Our Store",
-                "subheading": "Discover amazing products at unbeatable prices",
-                "button_text": "Shop Now",
-                "button_url": "/collections/all",
-                "background_image": "",
-                "background_color": "#f8f9fa",
-                "text_color": "#333333",
-                "text_alignment": "center",
-                "height": "medium",
-                "overlay_opacity": 30
-            }
-        },
-        "featured-products-section": {
-            "type": "featured-products-section",
-            "settings": {
-                "heading": "Featured Products",
-                "products": []
-            }
-        }
+  "sections": {
+    "hero-section": {
+      "type": "hero-section",
+      "settings": {
+        "hero_title": "SHAMSY COSMÉTIQUE NATURELLE POUR VOTRE PEAU",
+        "hero_description": "Nourrissez votre peau avec le soleil du Maroc",
+        "hero_image": "shopify://shop_images/1.png",
+        "hero_image_alt": "SHAMSY - Cosmétique Naturelle",
+        "primary_button_text": "Voir les produits",
+        "primary_button_url": "shopify://collections",
+        "secondary_button_text": "Commander maintenant",
+        "secondary_button_url": "shopify://collections",
+        "background_color": "#f8f9fa",
+        "title_color": "#333333",
+        "description_color": "#666666",
+        "primary_button_bg": "#2c3e50",
+        "primary_button_text_color": "#ffffff",
+        "secondary_button_border": "#2c3e50",
+        "secondary_button_text_color": "#2c3e50"
+      }
     },
-    "order": [
-        "hero-section",
-        "featured-products-section"
-    ]
+    "featured-products-section": {
+      "type": "featured-products-section",
+      "blocks": {
+        "product_card_dEM8y7": {
+          "type": "product_card",
+          "settings": {
+            "product": "baume-bronzant-monoi-shamsy-150-g"
+          }
+        },
+        "product_card_ea6Hfw": {
+          "type": "product_card",
+          "settings": {
+            "product": "lait-apaisant-shamsy-200-ml"
+          }
+        },
+        "product_card_DbmUge": {
+          "type": "product_card",
+          "settings": {
+            "product": "spray-bronzant-monoi-shamsy-200-ml"
+          }
+        },
+        "product_card_rAKmpd": {
+          "type": "product_card",
+          "settings": {
+            "product": "🌴-pack-shamsy"
+          }
+        }
+      },
+      "block_order": [
+        "product_card_dEM8y7",
+        "product_card_ea6Hfw",
+        "product_card_DbmUge",
+        "product_card_rAKmpd"
+      ],
+      "settings": {
+        "title": "Nos Produits",
+        "subtitle": "Découvrez notre gamme %100 naturelle et marocaine."
+      }
+    }
+  },
+  "order": [
+    "hero-section",
+    "featured-products-section"
+  ]
 }
