@@ -68,14 +68,15 @@
   }
 
   .product-card {
-    background: #ffffff;
-    border-radius: 20px;
+    border-radius: 50px;
     box-shadow: 0 8px 30px rgba(139, 90, 60, 0.08);
+    border: 1px solid #8b5a3c;
     overflow: hidden;
     transition: all 0.4s ease;
     opacity: 0;
     transform: translateY(40px);
     position: relative;
+    background-color: transparent;
   }
 
   .product-card.animate {
@@ -92,13 +93,33 @@
     position: relative;
     height: 250px;
     overflow: hidden;
-    border-radius: 20px 20px 0 0;
-    background: #f0ebe6;
+    border-radius: 50px ;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #8b5a3c;
+    background-color: #d17921;
+    overflow: hidden;
   }
+
+  .shadow-top-and-bottom {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.7) 0%,      /* Top black fade */
+    rgba(0, 0, 0, 0.1) 30%,       /* Fully transparent */
+    rgba(0, 0, 0, 0) 70%,       /* Fully transparent */
+    rgba(0, 0, 0, 0.4) 100%     /* Bottom black fade */
+  );
+  border-radius: 50px;
+  z-index: 1;
+  pointer-events: none; /* Let clicks pass through */
+}
+
 
   .product-image {
     width: 100%;
@@ -115,14 +136,14 @@
     position: absolute;
     top: 15px;
     left: 15px;
-    background: rgba(255, 255, 255, 0.95);
-    color: #8b5a3c;
+    color: rgba(255, 255, 255, 0.95);;
     padding: 8px 15px;
     border-radius: 20px;
     font-size: 0.9rem;
     font-weight: 600;
     backdrop-filter: blur(10px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 2;
   }
 
   .product-content {
@@ -136,11 +157,16 @@
   }
 
   .product-title {
-    font-size: 1.3rem;
+    position: absolute;
+    bottom: 0;
+    left: 20px;
+    right: 20px;
+    max-width: 20ch;
+    font-size: 1rem;
     font-weight: 700;
-    color: #6d4c36;
-    margin-bottom: 12px;
+    color: #ffffff;
     line-height: 1.3;
+    z-index: 2;
   }
 
   .product-description {
@@ -153,9 +179,7 @@
 
   .product-button {
     display: inline-block;
-    background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
-    color: #ffffff;
-    padding: 12px 25px;
+    color: #d4af37;
     border-radius: 25px;
     text-decoration: none;
     font-weight: 600;
@@ -236,46 +260,37 @@
         {% for block in section.blocks %}
           {% case block.type %}
             {% when 'product_card' %}
-              {% comment %} Get product data - either from product picker or manual inputs {% endcomment %}
-              {% if block.settings.product != blank %}
-                {% assign selected_product = block.settings.product %}
-                {% assign product_image = selected_product.featured_image %}
-                {% assign product_title = selected_product.title %}
-                {% assign product_description = selected_product.description | strip_html | truncate: 120 %}
-                {% assign product_price = selected_product.price | money %}
-                {% assign product_url = selected_product.url %}
-              {% else %}
-                {% assign product_image = block.settings.product_image %}
-                {% assign product_title = block.settings.product_title %}
-                {% assign product_description = block.settings.product_description %}
-                {% assign product_price = block.settings.product_price %}
-                {% assign product_url = block.settings.product_link %}
-              {% endif %}
+              {% comment %} Get product data - from product picker {% endcomment %}
+              
+                {% assign product_image = block.settings.product.featured_image %}
+                {% assign product_title = block.settings.product.title %}
+                {% assign product_price = block.settings.product.price %}
+                {% assign product_url = block.settings.product.url %}
               
               <div class="product-card" {{ block.shopify_attributes }}>
                 <div class="product-image-container">
+                  <div class="shadow-top-and-bottom"></div>
                   {% if product_image %}
-                    <img src="{{ product_image | img_url: '400x400' }}" 
+                    <img src="{{ product_image | img_url: 'master' }}" 
                          alt="{{ product_title | escape }}" 
                          class="product-image"
+                         width="400" height="400"
                          loading="lazy">
                   {% else %}
                     <div style="font-size: 1rem;">Image du produit</div>
                   {% endif %}
-                  
                   {% if product_price != blank %}
                     <div class="product-price">{{ product_price }}</div>
                   {% endif %}
-                </div>
-                
-                <div class="product-content">
                   <h3 class="product-title">
                     {{ product_title | default: 'Nom du Produit' }}
                   </h3>
+                </div>
+                
+                <div class="product-content">
                   
-                  {% if product_description != blank %}
-                    <p class="product-description">{{ product_description }}</p>
-                  {% endif %}
+                  
+                  
                   
                   {% if product_url != blank %}
                     <a href="{{ product_url }}" class="product-button">
@@ -360,95 +375,20 @@
           "type": "product",
           "id": "product",
           "label": "Sélectionner un produit",
-          "info": "Choisissez un produit existant pour remplir automatiquement les informations, ou laissez vide pour saisir manuellement."
-        },
-        {
-          "type": "header",
-          "content": "OU saisir manuellement"
-        },
-        {
-          "type": "image_picker",
-          "id": "product_image",
-          "label": "Image du produit",
-          "info": "Utilisé uniquement si aucun produit n'est sélectionné ci-dessus"
-        },
-        {
-          "type": "text",
-          "id": "product_title",
-          "label": "Nom du produit",
-          "default": "Produit Naturel",
-          "info": "Utilisé uniquement si aucun produit n'est sélectionné ci-dessus"
-        },
-        {
-          "type": "textarea",
-          "id": "product_description",
-          "label": "Description du produit",
-          "default": "Description de ce merveilleux produit naturel marocain.",
-          "info": "Utilisé uniquement si aucun produit n'est sélectionné ci-dessus"
-        },
-        {
-          "type": "text",
-          "id": "product_price",
-          "label": "Prix du produit",
-          "default": "€29",
-          "info": "Utilisé uniquement si aucun produit n'est sélectionné ci-dessus"
-        },
-        {
-          "type": "url",
-          "id": "product_link",
-          "label": "Lien du produit",
-          "info": "Utilisé uniquement si aucun produit n'est sélectionné ci-dessus"
-        },
-        {
-          "type": "header",
-          "content": "Personnalisation"
-        },
-        {
-          "type": "text",
-          "id": "button_text",
-          "label": "Texte du bouton",
-          "default": "Voir +",
-          "info": "Texte affiché sur le bouton d'action"
+          "info": "Choisissez un produit existant pour remplir automatiquement les informations"
         }
       ]
     }
+    
   ],
   "presets": [
     {
       "name": "Produits Personnalisés",
       "blocks": [
         {
-          "type": "product_card",
-          "settings": {
-            "product_title": "Argan Miracle Oil",
-            "product_description": "Huile d'argan pure du Maroc pour une peau radieuse et nourrie.",
-            "product_price": "29€"
-          }
-        },
-        {
-          "type": "product_card",
-          "settings": {
-            "product_title": "Rose Water Toner",
-            "product_description": "Tonique à l'eau de rose de Damas pour une hydratation naturelle.",
-            "product_price": "24€"
-          }
-        },
-        {
-          "type": "product_card",
-          "settings": {
-            "product_title": "Ghassoul Clay Mask",
-            "product_description": "Masque à l'argile de Ghassoul pour purifier et revitaliser la peau.",
-            "product_price": "19€"
-          }
-        },
-        {
-          "type": "product_card",
-          "settings": {
-            "product_title": "Prickly Pear Serum",
-            "product_description": "Sérum anti-âge à l'huile de figue de barbarie pour une peau jeune.",
-            "product_price": "39€"
-          }
-        }
+          "type": "product_card"
+          
+             }
       ]
     }
   ]
