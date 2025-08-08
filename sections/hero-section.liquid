@@ -238,7 +238,7 @@
 
   .image-1 {
     top: var(--top-offset, 0px);
-    left: var(--left-offset, 0px);
+    left: calc(var(--left-offset, 0px) - 30px);
     width: var(--size, 250px);
     height: var(--size, 250px);
     object-fit: cover;
@@ -248,7 +248,7 @@
 
   .image-2 {
     top: var(--top-offset, 20px);
-    left: var(--left-offset, 60px);
+    left: calc(var(--left-offset, 60px) - 30px);
     width: var(--size, 200px);
     height: var(--size, 200px);
     object-fit: cover;
@@ -359,12 +359,12 @@
     /* Adjust image positions for mobile */
     .image-1 {
       top: calc(var(--top-offset, 10px) * 0.8);
-      left: calc(var(--left-offset, 0px) * 0.8);
+      left: calc((var(--left-offset, 0px) - 30px) * 0.8);
     }
 
     .image-2 {
       top: calc(var(--top-offset, 30px) * 0.8);
-      left: calc(var(--left-offset, 60px) * 0.8);
+      left: calc((var(--left-offset, 60px) - 30px) * 0.8);
     }
   }
 
@@ -419,12 +419,12 @@
     /* Further adjust image positions for small mobile */
     .image-1 {
       top: calc(var(--top-offset, 10px) * 0.6);
-      left: calc(var(--left-offset, 0px) * 0.6);
+      left: calc((var(--left-offset, 0px) - 30px) * 0.6);
     }
 
     .image-2 {
       top: calc(var(--top-offset, 30px) * 0.6);
-      left: calc(var(--left-offset, 60px) * 0.6);
+      left: calc((var(--left-offset, 60px) - 30px) * 0.6);
     }
   }
 
