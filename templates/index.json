@@ -21,9 +21,9 @@
         "secondary_button_text": "Commander maintenant",
         "secondary_button_url": "shopify://collections",
         "background_color": "#f3e9dc",
-        "title_color": "#333333",
+        "title_color": "#a35e44",
         "description_color": "#666666",
-        "primary_button_bg": "#2c3e50",
+        "primary_button_bg": "#a35e44",
         "primary_button_text_color": "#ffffff",
         "secondary_button_border": "#2c3e50",
         "secondary_button_text_color": "#2c3e50"
