@@ -1,5 +1,6 @@
 {% comment %}
-  Hero Section - Two Customizable Floating Images Version
+  Hero Section - Two Customizable Floating Images Version with Entrance Animations
+  Mobile Responsive with Images on Top
 {% endcomment %}
 
 <section class="hero-section" id="hero-{{ section.id }}">
@@ -7,15 +8,15 @@
     <div class="hero-section__content">
       <div class="hero-section__text">
         {% if section.settings.hero_title != blank %}
-          <h1 class="hero-section__title">{{ section.settings.hero_title | escape }}</h1>
+          <h1 class="hero-section__title animate-fade-up">{{ section.settings.hero_title | escape }}</h1>
         {% endif %}
         
         {% if section.settings.hero_description != blank %}
-          <p class="hero-section__description">{{ section.settings.hero_description | escape }}</p>
+          <p class="hero-section__description animate-fade-up">{{ section.settings.hero_description | escape }}</p>
         {% endif %}
         
         {% if section.settings.primary_button_text != blank or section.settings.secondary_button_text != blank %}
-          <div class="hero-section__actions">
+          <div class="hero-section__actions animate-fade-up">
             {% if section.settings.primary_button_text != blank and section.settings.primary_button_url != blank %}
               <a href="{{ section.settings.primary_button_url }}" 
                  class="hero-section__btn hero-section__btn--primary"
@@ -37,7 +38,7 @@
       
       <div class="hero-section__image-container">
         {% if section.settings.image_1 != blank %}
-          <div class="floating-images">
+          <div class="floating-images animate-scale-in">
             {% assign image_1_alt = section.settings.image_1_alt | default: section.settings.image_1.alt | default: 'First floating image' %}
             
             <img 
@@ -50,7 +51,7 @@
                      --size: {{ section.settings.image_1_size | default: 250 }}px;
                      --animation-duration: {{ section.settings.image_1_animation_duration | default: 4 }}s;
                      --float-distance: {{ section.settings.image_1_float_distance | default: 10 }}px;
-                     --top-offset: {{ section.settings.image_1_top_offset | default: 0 }}px;
+                     --top-offset: {{ section.settings.image_1_top_offset | default: 10 }}px;
                      --left-offset: {{ section.settings.image_1_left_offset | default: 0 }}px;"
               >
 
@@ -68,8 +69,9 @@
                        --animation-duration: {{ section.settings.image_2_animation_duration | default: 3 }}s;
                        --float-distance: {{ section.settings.image_2_float_distance | default: 15 }}px;
                        --delay: {{ section.settings.image_2_animation_delay | default: 1.5 }}s;
-                       --top-offset: {{ section.settings.image_2_top_offset | default: 20 }}px;
+                       --top-offset: {{ section.settings.image_2_top_offset | default: 30 }}px;
                        --left-offset: {{ section.settings.image_2_left_offset | default: 60 }}px;"
+
                 >
             {% endif %}
           </div>
@@ -82,9 +84,6 @@
 <style>
   .hero-section {
     margin-top: 200px;
-    @media screen and (max-width: 768px) {
-      margin-top: 80px;
-    }
     padding: clamp(2rem, 5vw, 4rem) 0;
     background-color: {{ section.settings.background_color | default: '#f9f9f9' }};
     position: relative;
@@ -125,7 +124,8 @@
     color: {{ section.settings.description_color | default: '#666' }};
     line-height: 1.6;
     margin: 0;
-    font-family: 'Georgia', 'Times New Roman', serif;
+    font-family: 'Cormorant Garamond', 'Times New Roman', serif !important;
+    margin-bottom: 2rem;
   }
 
   .hero-section__actions {
@@ -149,7 +149,8 @@
     min-width: 140px;
     text-align: center;
     cursor: pointer;
-    font-family: 'Georgia', 'Times New Roman', serif;
+    font-family: 'Cormorant Garamond', 'Times New Roman', serif !important;
+    text-transform: uppercase;
   }
 
   .hero-section__btn--primary {
@@ -176,6 +177,46 @@
     transform: translateY(-1px);
   }
 
+  /* Entrance Animations */
+  .animate-fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.8s ease-out forwards;
+  }
+
+  .animate-fade-up:nth-child(1) {
+    animation-delay: 1.5s;
+  }
+
+  .animate-fade-up:nth-child(2) {
+    animation-delay: 1.8s;
+  }
+
+  .animate-fade-up:nth-child(3) {
+    animation-delay: 2.1s;
+  }
+
+  .animate-scale-in {
+    opacity: 0;
+    transform: scale(0.8);
+    animation: scaleIn 1s ease-out forwards;
+    animation-delay: 1.7s;
+  }
+
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
   /* Floating images container */
   .hero-section__image-container {
     display: flex;
@@ -187,10 +228,6 @@
     position: relative;
     width: 350px;
     height: 350px;
-    @media screen and (max-width: 768px) {
-      width: 250px;
-      height: 250px;
-    }
   }
 
   .floating-image {
@@ -242,48 +279,170 @@
     transform: scale({{ section.settings.image_hover_scale | default: 1.05 }}) rotate(var(--rotation));
   }
 
-  /* Mobile Styles */
+  /* Tablet Styles */
+  @media (max-width: 1024px) {
+    .hero-section {
+      margin-top: 120px;
+    }
+    
+    .hero-section__content {
+      gap: 3rem;
+    }
+    
+    .floating-images {
+      width: 300px;
+      height: 300px;
+    }
+  }
+
+  /* Mobile Styles - Images on Top */
   @media (max-width: 768px) {
+    .hero-section {
+      margin-top: 80px;
+      padding: clamp(1.5rem, 4vw, 3rem) 0;
+    }
+
     .hero-section__content {
       grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
       text-align: center;
-      gap: 2rem;
+      gap: 2.5rem;
+      min-height: auto;
+    }
+
+    /* Move images to top on mobile */
+    .hero-section__image-container {
+      order: -1;
+      margin-bottom: 1rem;
+    }
+
+    .hero-section__text {
+      order: 1;
+    }
+
+    .hero-section__title {
+      font-size: clamp(1.75rem, 5vw, 2.25rem);
+      margin-bottom: 1.5rem;
+      line-height: 1.3;
+    }
+
+    .hero-section__description {
+      font-size: clamp(1rem, 3vw, 1.125rem);
+      margin-bottom: 1.5rem;
+      max-width: 90%;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .hero-section__actions {
       justify-content: center;
+      gap: 1rem;
     }
 
     .hero-section__btn {
       width: 100%;
       max-width: 280px;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+    }
+
+    .floating-images {
+      width: 280px;
+      height: 280px;
     }
 
     .floating-image {
-      width: calc(var(--size, 250px) * 0.7) !important;
-      height: calc(var(--size, 250px) * 0.7) !important;
+      width: calc(var(--size, 250px) * 0.75) !important;
+      height: calc(var(--size, 250px) * 0.75) !important;
+    }
+
+    /* Adjust image positions for mobile */
+    .image-1 {
+      top: calc(var(--top-offset, 10px) * 0.8);
+      left: calc(var(--left-offset, 0px) * 0.8);
+    }
+
+    .image-2 {
+      top: calc(var(--top-offset, 30px) * 0.8);
+      left: calc(var(--left-offset, 60px) * 0.8);
     }
   }
 
+  /* Small Mobile Styles */
   @media (max-width: 480px) {
     .hero-section {
       padding: 1.5rem 0;
     }
 
+    .hero-section__container {
+      padding: 0 1rem;
+    }
+
+    .hero-section__content {
+      gap: 2rem;
+    }
+
+    .hero-section__title {
+      font-size: clamp(1.5rem, 6vw, 2rem);
+      margin-bottom: 1rem;
+    }
+
+    .hero-section__description {
+      font-size: clamp(0.9rem, 4vw, 1rem);
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+
     .hero-section__btn {
-      padding: 0.75rem 1.5rem;
+      padding: 0.875rem 1.75rem;
       font-size: 0.9rem;
       min-width: auto;
+      max-width: 260px;
     }
 
     .hero-section__actions {
       flex-direction: column;
       align-items: center;
+      gap: 0.75rem;
+    }
+
+    .floating-images {
+      width: 240px;
+      height: 240px;
     }
 
     .floating-image {
       width: calc(var(--size, 250px) * 0.6) !important;
       height: calc(var(--size, 250px) * 0.6) !important;
+    }
+
+    /* Further adjust image positions for small mobile */
+    .image-1 {
+      top: calc(var(--top-offset, 10px) * 0.6);
+      left: calc(var(--left-offset, 0px) * 0.6);
+    }
+
+    .image-2 {
+      top: calc(var(--top-offset, 30px) * 0.6);
+      left: calc(var(--left-offset, 60px) * 0.6);
+    }
+  }
+
+  /* Extra Small Mobile */
+  @media (max-width: 360px) {
+    .floating-images {
+      width: 200px;
+      height: 200px;
+    }
+
+    .floating-image {
+      width: calc(var(--size, 250px) * 0.5) !important;
+      height: calc(var(--size, 250px) * 0.5) !important;
+    }
+
+    .hero-section__btn {
+      max-width: 240px;
+      padding: 0.75rem 1.5rem;
     }
   }
 
@@ -299,6 +458,13 @@
     .hero-section__btn,
     .floating-image {
       transition: none;
+      animation: none;
+    }
+    
+    .animate-fade-up,
+    .animate-scale-in {
+      opacity: 1;
+      transform: none;
       animation: none;
     }
   }
@@ -387,7 +553,7 @@
       "step": 5,
       "unit": "px",
       "label": "First Image Top Position",
-      "default": 0
+      "default": 10
     },
     {
       "type": "range",
@@ -472,7 +638,7 @@
       "step": 5,
       "unit": "px",
       "label": "Second Image Top Position",
-      "default": 20
+      "default": 30
     },
     {
       "type": "range",

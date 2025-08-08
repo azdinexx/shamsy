@@ -1,7 +1,7 @@
 <!-- Custom Products Section - Luxury Moroccan Skincare (Blocks Version) -->
 <style>
   .custom-products-section {
-    background: linear-gradient(135deg, #f7f3f0 0%, #f0ebe6 100%);
+    background: {{ section.settings.background_color }};
     padding: 80px 20px;
     font-family: 'Georgia', serif;
     overflow: hidden;
@@ -91,7 +91,7 @@
 
   .product-image-container {
     position: relative;
-    height: 250px;
+    height: 300px;
     overflow: hidden;
     border-radius: 50px ;
     display: flex;
@@ -364,6 +364,11 @@
       "id": "subtitle", 
       "label": "Sous-titre de la section",
       "default": "Découvrez notre gamme %100 naturelle et marocaine."
+    },{
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur de fond",
+      "default": "#f7f3f0"
     }
   ],
   "blocks": [
