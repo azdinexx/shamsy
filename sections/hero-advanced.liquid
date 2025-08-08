@@ -1,0 +1,176 @@
+{% comment %}
+  Hero Section with 3D Model - Interactive & Larger Model
+{% endcomment %}
+
+<section class="hero-section" id="hero-{{ section.id }}">
+  <div class="hero-section__container">
+    <div class="hero-section__content">
+      <div class="hero-section__text">
+        {% if section.settings.hero_title != blank %}
+          <h1 class="hero-section__title">{{ section.settings.hero_title | escape }}</h1>
+        {% endif %}
+        
+        {% if section.settings.hero_description != blank %}
+          <p class="hero-section__description">{{ section.settings.hero_description | escape }}</p>
+        {% endif %}
+        
+        {% if section.settings.primary_button_text != blank or section.settings.secondary_button_text != blank %}
+          <div class="hero-section__actions">
+            {% if section.settings.primary_button_text != blank and section.settings.primary_button_url != blank %}
+              <a href="{{ section.settings.primary_button_url }}" 
+                 class="hero-section__btn hero-section__btn--primary"
+                 {% if section.settings.primary_button_url contains 'http' %}target="_blank" rel="noopener"{% endif %}>
+                {{ section.settings.primary_button_text | escape }}
+              </a>
+            {% endif %}
+            
+            {% if section.settings.secondary_button_text != blank and section.settings.secondary_button_url != blank %}
+              <a href="{{ section.settings.secondary_button_url }}" 
+                 class="hero-section__btn hero-section__btn--secondary"
+                 {% if section.settings.secondary_button_url contains 'http' %}target="_blank" rel="noopener"{% endif %}>
+                {{ section.settings.secondary_button_text | escape }}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+      
+      <div class="hero-section__3d-container">
+        <div class="loading-indicator" id="loadingIndicator-{{ section.id }}">Loading 3D model...</div>
+        <div class="error-message" id="errorMessage-{{ section.id }}" style="display: none;"></div>
+        <canvas id="heroCanvas-{{ section.id }}" class="hero-section__canvas" aria-label="3D Model Display"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Load Three.js, GLTFLoader & OrbitControls -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js" defer></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const sectionId = '{{ section.id }}';
+  const canvas = document.getElementById('heroCanvas-' + sectionId);
+  const loadingIndicator = document.getElementById('loadingIndicator-' + sectionId);
+  const errorMessage = document.getElementById('errorMessage-' + sectionId);
+  
+  const glbUrl = {{ section.settings.glb_url | json }};
+  if (!glbUrl || glbUrl.trim() === '') {
+    loadingIndicator.style.display = 'none';
+    errorMessage.textContent = 'Please add a GLB model URL in the theme editor.';
+    errorMessage.style.display = 'block';
+    return;
+  }
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1;
+
+  function setRendererSize() {
+    const rect = canvas.getBoundingClientRect();
+    renderer.setSize(rect.width, rect.height);
+    camera.aspect = rect.width / rect.height;
+    camera.updateProjectionMatrix();
+  }
+  setRendererSize();
+
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  scene.add(ambientLight);
+
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  directionalLight.position.set(5, 5, 5);
+  scene.add(directionalLight);
+
+  const loader = new THREE.GLTFLoader();
+  let model = null;
+  let animationMixer = null;
+
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.enableZoom = true;
+  controls.enablePan = true;
+
+  loader.load(
+    glbUrl,
+    function (gltf) {
+      model = gltf.scene;
+      scene.add(model);
+
+      if (gltf.animations.length > 0) {
+        animationMixer = new THREE.AnimationMixer(model);
+        gltf.animations.forEach((clip) => animationMixer.clipAction(clip).play());
+      }
+
+      const box = new THREE.Box3().setFromObject(model);
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+      model.position.sub(center);
+
+      const maxSize = Math.max(size.x, size.y, size.z);
+      const targetSize = {{ section.settings.model_scale | default: 6 }};
+      const scale = targetSize / maxSize;
+      model.scale.setScalar(scale);
+
+      camera.position.z = maxSize * 2;
+
+      loadingIndicator.style.display = 'none';
+      animate();
+    },
+    undefined,
+    function (error) {
+      console.error(error);
+      loadingIndicator.style.display = 'none';
+      errorMessage.textContent = 'Failed to load GLB file.';
+      errorMessage.style.display = 'block';
+    }
+  );
+
+  const clock = new THREE.Clock();
+  function animate() {
+    requestAnimationFrame(animate);
+    const delta = clock.getDelta();
+    if (animationMixer) animationMixer.update(delta);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+
+  window.addEventListener('resize', setRendererSize);
+});
+</script>
+
+<style>
+  .hero-section__3d-container {
+    position: relative;
+    width: 100%;
+    height: 500px; /* bigger model area */
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.05);
+  }
+  .hero-section__canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Hero 3D Model",
+  "settings": [
+    { "type": "text", "id": "hero_title", "label": "Hero Title" },
+    { "type": "textarea", "id": "hero_description", "label": "Hero Description" },
+    { "type": "url", "id": "glb_url", "label": "GLB Model URL" },
+    { "type": "range", "id": "rotation_speed", "label": "Rotation Speed", "min": 0, "max": 50, "step": 1, "default": 10 },
+    { "type": "range", "id": "model_scale", "label": "Model Size", "min": 1, "max": 10, "step": 0.5, "default": 6 }
+  ],
+  "presets": [{ "name": "Hero Section with 3D Model" }]
+}
+{% endschema %}

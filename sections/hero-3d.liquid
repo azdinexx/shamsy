@@ -1,0 +1,475 @@
+{% style %}
+    .hero-3d-section {
+      width: 100%;
+      height: {{ section.settings.section_height }};
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: {{ section.settings.background_color }};
+      position: relative;
+      overflow: hidden;
+    }
+    
+    #heroCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+    }
+    
+    .testimonials-overlay {
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: {{ section.settings.text_color }};
+      max-width: 600px;
+      width: 90%;
+    }
+    
+    .testimonials-container {
+      position: relative;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .testimonial-item {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: all 0.8s ease-in-out;
+      width: 100%;
+    }
+    
+    .testimonial-item.active {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    
+    .testimonial-item.fade-out {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.95);
+    }
+    
+    .testimonial {
+      font-size: {{ section.settings.testimonial_font_size }}px;
+      margin-bottom: 1rem;
+      font-style: italic;
+      line-height: 1.4;
+      animation: slideInUp 0.6s ease-out;
+    }
+    
+    .author {
+      font-weight: bold;
+      font-size: {{ section.settings.author_font_size }}px;
+      animation: slideInUp 0.6s ease-out 0.2s both;
+    }
+    
+    .testimonial-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+    }
+    
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: {{ section.settings.text_color }};
+      opacity: 0.3;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .dot.active {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+    
+    .dot:hover {
+      opacity: 0.7;
+    }
+    
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+    
+    .loading-indicator, .error-message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      color: {{ section.settings.text_color }};
+      font-size: 16px;
+    }
+    
+    .error-message {
+      color: #e74c3c;
+    }
+{% endstyle %}
+
+<div class="hero-3d-section">
+  <div class="loading-indicator" id="loadingIndicator">Loading 3D models...</div>
+  <div class="error-message" id="errorMessage" style="display: none;">
+    Failed to load 3D models. Please check the GLB file URLs.
+  </div>
+  <canvas id="heroCanvas"></canvas>
+
+  <!-- Testimonials Overlay -->
+  <div class="testimonials-overlay">
+    <div class="testimonials-container">
+      {% for block in section.blocks %}
+        {% if block.type == 'testimonial' %}
+          <div class="testimonial-item{% if forloop.first %} active{% endif %}" data-index="{{ forloop.index0 }}">
+            <div class="testimonial">"{{ block.settings.testimonial_text }}"</div>
+            <div class="author">– {{ block.settings.author_name }}</div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    
+    {% if section.blocks.size > 1 %}
+      <div class="testimonial-dots">
+        {% for block in section.blocks %}
+          {% if block.type == 'testimonial' %}
+            <div class="dot{% if forloop.first %} active{% endif %}" data-index="{{ forloop.index0 }}"></div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js" defer></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const canvas = document.getElementById('heroCanvas');
+  const loadingIndicator = document.getElementById('loadingIndicator');
+  const errorMessage = document.getElementById('errorMessage');
+
+  const glbUrl1 = {{ section.settings.glb_url_1 | json }};
+  const glbUrl2 = {{ section.settings.glb_url_2 | json }};
+  
+  if (!glbUrl1 || !glbUrl2) {
+    loadingIndicator.style.display = 'none';
+    errorMessage.textContent = 'Please add both GLB model URLs in the theme editor.';
+    errorMessage.style.display = 'block';
+    return;
+  }
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  function setRendererSize() {
+    const rect = canvas.getBoundingClientRect();
+    renderer.setSize(rect.width, rect.height);
+    camera.aspect = rect.width / rect.height;
+    camera.updateProjectionMatrix();
+  }
+  setRendererSize();
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+  dirLight.position.set(5, 5, 5);
+  scene.add(dirLight);
+
+  const loader = new THREE.GLTFLoader();
+  let model1, model2;
+
+  function loadModel(url, onLoad) {
+    loader.load(url, gltf => {
+      const model = gltf.scene;
+      const box = new THREE.Box3().setFromObject(model);
+      const center = box.getCenter(new THREE.Vector3());
+      model.position.sub(center);
+      model.scale.setScalar({{ section.settings.model_scale }});
+      scene.add(model);
+      onLoad(model);
+    }, undefined, err => {
+      console.error('Error loading model:', err);
+      loadingIndicator.style.display = 'none';
+      errorMessage.style.display = 'block';
+    });
+  }
+
+  loadModel(glbUrl1, m => { model1 = m; });
+  loadModel(glbUrl2, m => { 
+    model2 = m; 
+    model2.position.x = 2; // move right
+  });
+
+  camera.position.z = 6;
+  loadingIndicator.style.display = 'none';
+
+  const clock = new THREE.Clock();
+  function animate() {
+    requestAnimationFrame(animate);
+    const delta = clock.getDelta();
+
+    if (model1) {
+      model1.rotation.y += {{ section.settings.rotation_speed }} * 0.001;
+      model1.position.y = -2.5+Math.sin(clock.elapsedTime) * 0.2; // float
+    }
+    if (model2) {
+      model2.rotation.y -= {{ section.settings.rotation_speed }} * 0.001;
+      model2.position.y = -2.5+Math.cos(clock.elapsedTime) * 0.2;
+    }
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => setRendererSize());
+
+  // Testimonials Animation Logic
+  const testimonialItems = document.querySelectorAll('.testimonial-item');
+  const dots = document.querySelectorAll('.dot');
+  const autoRotateInterval = {{ section.settings.auto_rotate_interval | default: 5000 }};
+  let currentIndex = 0;
+  let autoRotateTimer;
+
+  function showTestimonial(index) {
+    // Hide all testimonials
+    testimonialItems.forEach((item, i) => {
+      item.classList.remove('active');
+      if (i === currentIndex) {
+        item.classList.add('fade-out');
+      }
+    });
+
+    // Update dots
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === index);
+    });
+
+    // Show new testimonial after fade out
+    setTimeout(() => {
+      testimonialItems.forEach(item => {
+        item.classList.remove('fade-out');
+      });
+      
+      if (testimonialItems[index]) {
+        testimonialItems[index].classList.add('active');
+      }
+      currentIndex = index;
+    }, 200);
+  }
+
+  function nextTestimonial() {
+    const nextIndex = (currentIndex + 1) % testimonialItems.length;
+    showTestimonial(nextIndex);
+  }
+
+  function startAutoRotate() {
+    if (testimonialItems.length > 1 && {{ section.settings.auto_rotate | default: true }}) {
+      autoRotateTimer = setInterval(nextTestimonial, autoRotateInterval);
+    }
+  }
+
+  function stopAutoRotate() {
+    if (autoRotateTimer) {
+      clearInterval(autoRotateTimer);
+    }
+  }
+
+  // Dot click handlers
+  dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+      stopAutoRotate();
+      showTestimonial(index);
+      startAutoRotate();
+    });
+  });
+
+  // Pause on hover
+  const testimonialsOverlay = document.querySelector('.testimonials-overlay');
+  if (testimonialsOverlay) {
+    testimonialsOverlay.addEventListener('mouseenter', stopAutoRotate);
+    testimonialsOverlay.addEventListener('mouseleave', startAutoRotate);
+  }
+
+  // Start auto rotation
+  startAutoRotate();
+});
+</script>
+
+{% schema %}
+{
+  "name": "Hero 3D Testimonials",
+  "settings": [
+    {
+      "type": "url",
+      "id": "glb_url_1",
+      "label": "GLB Model URL 1"
+    },
+    {
+      "type": "url",
+      "id": "glb_url_2",
+      "label": "GLB Model URL 2"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f8f8f8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "select",
+      "id": "section_height",
+      "label": "Section Height",
+      "options": [
+        { "value": "100vh", "label": "Full Screen" },
+        { "value": "80vh", "label": "80% Screen Height" },
+        { "value": "70vh", "label": "70% Screen Height" }
+      ],
+      "default": "80vh"
+    },
+    {
+      "type": "range",
+      "id": "rotation_speed",
+      "label": "Rotation Speed",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 10,
+      "unit": "rpm"
+    },
+    {
+      "type": "range",
+      "id": "model_scale",
+      "label": "Model Size",
+      "min": 1,
+      "max": 50,
+      "step": 0.5,
+      "default": 30,
+      "unit": "x"
+    },
+    {
+      "type": "header",
+      "content": "Testimonials Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_rotate",
+      "label": "Auto-rotate testimonials",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "auto_rotate_interval",
+      "label": "Auto-rotate interval",
+      "min": 2000,
+      "max": 8000,
+      "step": 500,
+      "default": 5000,
+      "unit": "ms"
+    },
+    {
+      "type": "range",
+      "id": "testimonial_font_size",
+      "label": "Testimonial Font Size",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "author_font_size",
+      "label": "Author Font Size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "testimonial_text",
+          "label": "Testimonial Text",
+          "default": "This product changed my life!"
+        },
+        {
+          "type": "text",
+          "id": "author_name",
+          "label": "Author Name",
+          "default": "Alex P."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero 3D Models + Testimonials",
+      "category": "Custom",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "testimonial_text": "This product changed my life!",
+            "author_name": "Alex P."
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "testimonial_text": "Absolutely stunning quality and service.",
+            "author_name": "Jamie L."
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "testimonial_text": "I can't imagine my workflow without this!",
+            "author_name": "Sam R."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
