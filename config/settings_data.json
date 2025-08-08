@@ -45,11 +45,11 @@
           "logo_alt": "Shop logo",
           "left_menu": "main-menu",
           "right_menu": "footer",
-          "text_color": "#000000",
+          "text_color": "#f3e9dc",
           "background_color": "#ffffff",
           "border_color": "#e5e5e5",
           "shadow_color": "#0000000d",
-          "primary_color": "#ff5a5f",
+          "primary_color": "#ffc371",
           "secondary_color": "#ffc371",
           "hover_bg_color": "#f9f9f9",
           "font_family": "Helvetica, Arial, sans-serif"
