@@ -10,7 +10,7 @@
     {{ content_for_header }}
     <!-- Header hook for plugins -->
     <link rel="preload" href="{{ 'tan-pearl.otf' | asset_url }}" as="font" type="font/otf" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700&display=swap">
     
     <link href="{{ 'application.css' | asset_url }}" rel="stylesheet">
     <script src="{{ 'application.js' | asset_url }}" defer></script>
@@ -51,7 +51,7 @@
       if ('fonts' in document) {
     Promise.all([
       document.fonts.load('1em Tan Pearl'),
-      document.fonts.load('1em Cormorant Garamond')
+      document.fonts.load('1em Jost')
     ]).then(() => {
       document.documentElement.classList.add('fonts-loaded');
       document.documentElement.classList.remove('fonts-loading');

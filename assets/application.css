@@ -111,7 +111,7 @@ body {
 /* Debug font loading - you can remove this after confirming it works */
 .fonts-loading * {
 
-    font-family: 'Cormorant Garamond', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 
 .fonts-loaded * {
