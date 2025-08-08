@@ -14,9 +14,9 @@
       "settings": {
         "hero_title": "SHAMSY COSMÉTIQUE NATURELLE POUR VOTRE PEAU",
         "hero_description": "Nourrissez votre peau avec le soleil du Maroc",
-        "image_1": "shopify://shop_images/untitled.png",
+        "image_1": "shopify://shop_images/hero-image_2.png",
         "image_1_alt": "SHAMSY - First Product Image",
-        "image_1_size": 400,
+        "image_1_size": 380,
         "image_1_rotation": -8,
         "image_1_animation_duration": 4,
         "image_1_float_distance": 19,
@@ -82,7 +82,8 @@
       ],
       "settings": {
         "title": "Nos Produits",
-        "subtitle": "Découvrez notre gamme %100 naturelle et marocaine."
+        "subtitle": "Découvrez notre gamme %100 naturelle et marocaine.",
+        "background_color": "#f7f3f0"
       }
     },
     "hero_3d_WBGLq9": {
