@@ -8,48 +8,6 @@
  * ------------------------------------------------------------
  */
 {
-<<<<<<< HEAD
-    "sections": {
-        "hero-section": {
-            "type": "hero-section",
-            "settings": {
-                "heading": "Welcome to Our Store",
-                "subheading": "Discover amazing products at unbeatable prices",
-                "button_text": "Shop Now",
-                "button_url": "/collections/all",
-                "background_image": "",
-                "background_color": "#f8f9fa",
-                "text_color": "#333333",
-                "text_alignment": "center",
-                "height": "medium",
-                "overlay_opacity": 30
-            }
-        },
-        "featured-products-section": {
-            "type": "featured-products-section",
-            "settings": {
-                "heading": "Featured Products",
-                "products": []
-            }
-        },
-        "hero-3d": {
-            "type": "hero-3d",
-            "settings": {
-                "glb_url": "https://cdn.shopify.com/3d/models/f31d59961fabf28a/Tube.glb",
-                "background_color": "#f8f8f8",
-                "section_height": "80vh",
-                "rotation_speed": 15,
-                "model_scale": 4
-            }
-        },
-    },
-    "order": [
-        "hero-section",
-        "featured-products-section",
-        "hero-3d",
-    ]
-}
-=======
   "sections": {
     "hero-section": {
       "type": "hero-section",
@@ -109,11 +67,56 @@
         "title": "Nos Produits",
         "subtitle": "Découvrez notre gamme %100 naturelle et marocaine."
       }
+    },
+    "hero_3d_WBGLq9": {
+      "type": "hero-3d",
+      "blocks": {
+        "testimonial_XXwRUU": {
+          "type": "testimonial",
+          "settings": {
+            "testimonial_text": "J’ai utilisé la crème Shamsy pendant mes vacances, résultat incroyable !",
+            "author_name": "— Kenza, Marrakech"
+          }
+        },
+        "testimonial_bJQPzU": {
+          "type": "testimonial",
+          "settings": {
+            "testimonial_text": "Depuis que j’utilise l’huile Shamsy, ma peau est beaucoup plus souple",
+            "author_name": "— Salma, Agadir"
+          }
+        },
+        "testimonial_bAjBeL": {
+          "type": "testimonial",
+          "settings": {
+            "testimonial_text": "J’adore l’odeur et la texture ! Enfin une crème naturelle qui me convient.",
+            "author_name": "— Nadia, Tanger"
+          }
+        }
+      },
+      "block_order": [
+        "testimonial_XXwRUU",
+        "testimonial_bJQPzU",
+        "testimonial_bAjBeL"
+      ],
+      "name": "Hero 3D Models + Testimonials",
+      "settings": {
+        "glb_url_1": "https://cdn.shopify.com/3d/models/f31d59961fabf28a/Tube.glb",
+        "glb_url_2": "https://cdn.shopify.com/3d/models/f31d59961fabf28a/Tube.glb",
+        "background_color": "#f8f8f8",
+        "text_color": "#000000",
+        "section_height": "80vh",
+        "rotation_speed": 10,
+        "model_scale": 30,
+        "auto_rotate": true,
+        "auto_rotate_interval": 5000,
+        "testimonial_font_size": 20,
+        "author_font_size": 16
+      }
     }
   },
   "order": [
     "hero-section",
-    "featured-products-section"
+    "featured-products-section",
+    "hero_3d_WBGLq9"
   ]
 }
->>>>>>> 42ae55a7517a7e5bfd103feb611a6f35830f60b9
